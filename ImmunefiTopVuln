@@ -1,0 +1,235 @@
+Introduction
+
+Smart contracts, powered by blockchain technology, have revolutionized various industries by providing decentralized and automated functionalities. However, they have also introduced new types of security challenges in the operation and design of decentralized applications.
+
+In this article, we will explore the top ten most common smart contract vulnerabilities that developers and auditors should be aware of in order to build secure and robust smart contracts.
+
+Note: The majority of projects and bugs submitted through Immunefi make use of EVM-based blockchains. Therefore, this article will focus on those technologies. However, these categorizations are intended to be generic and extendable to any blockchain technology. The vulnerabilities which made it on this list were determined by a combination of analyzing hacks from Q1 of 2023 and historical bugfix review articles detailing bugs submitted and paid through Immunefi.
+Vulnerabilities
+V01:2023 Improper Input Validation
+V02:2023 Incorrect Calculation
+V03:2023 Oracle/Price Manipulation
+V04:2023 Weak Access Control
+V05:2023 Replay Attacks/Signature Malleability
+V06:2023 Rounding Error
+V07:2023 Reentrancy
+V08:2023 Frontrunning
+V09:2023 Uninitialized Proxy
+V10:2023 Governance Attacks
+V01:2023 Improper Input Validation
+Overview
+
+Improper input validation is the predominant root cause of a substantial number of confirmed vulnerability reports submitted through Immunefi, as well as exploited in the wild. Input validation is a critical security practice that involves verifying the integrity, accuracy, and safety of data input into a system. Failure to validate inputs properly can open up avenues for attackers to exploit and manipulate the system’s behavior.
+Description
+
+Improper input validation occurs when smart contracts fail to adequately validate and sanitize user inputs, leaving them vulnerable to various types of attacks. This type of vulnerability can be exploited to manipulate contract logic, inject malicious data, or cause unexpected behavior. Proper input validation ensures that only valid and expected data is processed by the contract, reducing the risk of exploitation.
+Prevention
+
+To prevent vulnerabilities of this kind, developers should implement comprehensive input validation routines. This includes validating data types, checking for boundary conditions, and sanitizing user input to prevent unexpected conditions from occurring. It is essential to consider all possible input scenarios, including edge cases and unexpected inputs, in order to ensure robust input validation. Some tools and techniques that can help prevent missing edge cases for developers are fuzzing or symbolic execution. These tools can assist developers in testing a variety of inputs to ensure malicious inputs don’t break invariants or execution of their smart contracts.
+Examples
+
+The Beanstalk Logic Error Bugfix Review showcases an example of a missing input validation vulnerability. The Beanstalk Token Facet contract had a vulnerability in the transferTokenFrom() function, where the msg.sender’s allowance was not properly validated during an EXTERNAL mode transfer. This flaw allowed an attacker to transfer funds from a victim’s account who had previously granted approval to the Beanstalk contract.
+References
+
+    https://medium.com/immunefi/sovryn-loan-vulnerability-postmortem-ffaf4d1d688f
+    https://medium.com/immunefi/zapper-arbitrary-call-data-bug-fix-postmortem-d75a4a076ae9
+    https://medium.com/immunefi/cream-finance-insufficient-validation-bug-fix-postmortem-1ec7248e8865
+    https://medium.com/immunefi/pancakeswap-logic-error-bug-fix-postmortem-f2d02adb6983
+    https://medium.com/immunefi/mcdex-insufficient-validation-bug-fix-postmortem-182fc6cab899
+    https://medium.com/immunefi/polygon-lack-of-balance-check-bugfix-postmortem-2-2m-bounty-64ec66c24c7d
+    https://medium.com/immunefi/notional-double-counting-free-collateral-bugfix-review-28b634903934
+    https://medium.com/immunefi/port-finance-logic-error-bugfix-review-29767aced446
+    https://medium.com/immunefi/aurora-withdrawal-logic-error-bugfix-review-c5b4e30a9160
+    https://medium.com/immunefi/aurora-improper-input-sanitization-bugfix-review-a9376dac046f
+    https://medium.com/immunefi/mt-pelerin-double-transaction-bugfix-review-503838db3d70
+    https://medium.com/immunefi/balancer-logic-error-bugfix-review-74f5edca8b1a
+    https://medium.com/immunefi/beanstalk-logic-error-bugfix-review-4fea17478716
+    https://medium.com/immunefi/hack-analysis-platypus-finance-february-2023-d11fce37d861
+
+V02:2023 Incorrect Calculation
+Overview
+
+Incorrect calculations are a close second in confirmed bug reports that we see on Immunefi.
+
+Incorrect or inconsistent calculations within a smart contract can result in unintended consequences, such as inaccurate token balances, incorrect reward distribution, or unexpected results during contract execution. Incorrect calculations are typically paired with underexplored code paths and are closely related to improper input validation bugs. However, incorrect calculations deal with vulnerabilities in which it was intended for the user to be able to perform some action, but as a result of the incorrect calculation, the user may receive much more value in return from that action than expected.
+Description
+
+In smart contracts, incorrect calculations occur when mathematical operations are performed incorrectly, leading to unexpected or incorrect results. These vulnerabilities can arise due to various reasons, such as incorrect assumptions about the precision, range of values, or inconsistent calculations across different parts of the contract. Incorrect calculations can also occur when contracts fail to consider edge cases or handle corner cases properly. In some instances, contracts may not account for extreme values, or fail to handle overflows, or underflows, leading to unexpected behavior or security risks. These vulnerabilities can be exploited by attackers to manipulate calculations or gain unauthorized advantages within the contract. Proper mathematical precision and careful consideration of corner cases are essential to prevent such vulnerabilities.
+Prevention
+
+Unit testing along with fuzzing or symbolic execution can help prevent missing edge cases from creeping into the codebase. Additionally, formal verification of mathematical equations would help provide guarantees to states which can exist. Use well-tested and secure mathematical libraries or built-in functions provided by the blockchain platform to perform calculations accurately. These libraries often have built-in protections against common calculation errors, such as overflow or underflow.
+Examples
+
+88MPH Theft Of Unclaimed MPH Rewards Bugfix Review demonstrates a case of incorrect calculation, in which MPH rewards were calculated with the incorrect rewardPerToken and would have allowed an attacker to entirely drain the vesting contract of unclaimed MPH rewards.
+References
+
+    https://medium.com/immunefi/armorfi-bug-bounty-postmortem-cf46eb650b38
+    https://medium.com/immunefi/vesper-rebase-vulnerability-postmortem-and-bug-bounty-55354a49d184
+    https://medium.com/immunefi/pods-finance-bug-fix-postmortem-61a576897ebd
+    https://medium.com/immunefi/tidal-finance-logic-error-bug-fix-postmortem-3607d8b7ed1f
+    https://medium.com/immunefi/belt-finance-logic-error-bug-fix-postmortem-39308a158291
+    https://medium.com/immunefi/cronos-theft-of-transactions-fees-bugfix-postmortem-b33f941b9570
+    https://medium.com/immunefi/apwine-incorrect-check-of-delegations-bugfix-review-7e401a49c04f
+    https://medium.com/immunefi/polygon-consensus-bypass-bugfix-review-7076ce5047fe
+    https://medium.com/immunefi/synthetix-logic-error-bugfix-review-40da0ead5f4f
+    https://medium.com/immunefi/building-a-poc-for-the-uranium-heist-ec83fbd83e9f
+    https://medium.com/immunefi/hack-analysis-saddle-finance-april-2022-f2bcb119f38
+    https://medium.com/immunefi/88mph-theft-of-unclaimed-mph-rewards-bugfix-review-1dec98b9956b
+
+V03:2023 Oracle/Price Manipulation
+Overview
+
+Smart contracts often rely on external data sources, called oracles, to make informed decisions. If these oracles are compromised or manipulated, it may lead to incorrect pricing for swaps, improper reward calculation, the ability to borrow more assets than a collateralization ratio allows, or other general issues with financial transactions. Manipulation of these external data sources is one of the leading causes of DeFi exploits that occur on-chain. Selecting trusted oracles and implementing secure data verification mechanisms are crucial to mitigating the risks associated with oracle/price manipulation.
+Description
+
+Since many protocols are designed to update pricing of assets based on user actions, this can be an obvious but easily overlooked vulnerability, as prices are expected to update based on user interaction. However, when protocols are reliant on those pricing mechanisms, internally or externally, careful consideration should be taken to ensure spot prices cannot be abused. Whether or not price manipulation can be effectively executed can also be highly dependent on current on-chain conditions. Pools with shallow liquidity are at higher risk for manipulation than those which have deeper liquidity. Careful selection of trusted oracles and implementation of secure data verification mechanisms are crucial. Staleness checks, average pricing mechanisms, and read-only reentrancy protections may be important features to implement for robust integration of external pricing mechanisms. Diversification of data sources can also prevent exploits in a single protocol from wreaking havoc on the entire blockchain ecosystem.
+Prevention
+
+To prevent oracle/price manipulation vulnerabilities, developers should carefully select trusted oracles with reputable track records. Implementing secure data verification mechanisms, such as cryptographic proofs or multiple data source aggregation, can help ensure the accuracy and integrity of the received data. Regularly auditing and monitoring oracle contracts and their interactions with smart contracts can also help identify potential vulnerabilities. Assumptions should not be made about the accuracy of data returned from external oracles, and protections should be put in place to prevent temporary price manipulations or stale data from affecting the operation of the protocol.
+Examples
+
+BonqDAO experienced a price oracle manipulation attack which allowed an attacker to momentarily inflate the price of the WALBT token, in order to borrow much more stablecoin (BEUR) than entitled to. The attacker then manipulated the price again, reducing it to a very small value in order to liquidate over 30 under-collateralized troves. What made BonqDAO vulnerable was not the permissionless nature of its price reporting mechanism, but the fact that it considered the protocol contract’s spot price as the last reported value. Because of that, anyone could momentarily inflate or deflate the value of a given price feed.
+References
+
+    https://medium.com/immunefi/fei-protocol-vulnerability-postmortem-483f9a7e6ad1
+    https://medium.com/immunefi/fei-protocol-flashloan-vulnerability-postmortem-7c5dc001affb
+    https://medium.com/immunefi/mushrooms-finance-theft-of-yield-bug-fix-postmortem-16bd6961388f
+    https://medium.com/immunefi/enzyme-finance-price-oracle-manipulation-bug-fix-postmortem-4e1f3d4201b5
+    https://medium.com/immunefi/hack-analysis-cream-finance-oct-2021-fc222d913fc5
+    https://medium.com/immunefi/hack-analysis-bonqdao-february-2023-ef6aab0086d6
+
+V04:2023 Weak Access Control
+Overview
+
+Weak access control mechanisms can allow unauthorized users or malicious actors to gain unauthorized access to critical functions or data within a smart contract. Access control is crucial in ensuring that only authorized entities can interact with specific functionalities or modify crucial parameters.
+Description
+
+Proper access control measures, such as role-based permissions and strong authentication mechanisms, must be implemented to prevent unauthorized access. Clearly documenting these limitations and abilities of actors within the system can help highlight which actions are at risk for critical vulnerabilities. This kind of documentation can facilitate improved unit testing and the identification of potential conflicts, ensuring that the system operates as intended and minimizes the risks of critical vulnerabilities from a single missing check. Projects should also make sure roles are limited as much as possible in their allowed actions to prevent risks from the web2 world causing irreparable damage to the system as a whole. A compromised private key is incredibly devastating if roles are not granular enough, or if the protocol relies heavily on centralization as a security model.
+Prevention
+
+To prevent weak access control vulnerabilities, developers should implement role-based access control mechanisms. Clearly define roles and their associated permissions within the contract’s documentation. Implement strong signature verification and use verified and tested libraries. Regularly review and update access control mechanisms to address any changes in system requirements or user roles.
+Examples
+
+Enzyme Finance rewarded a researcher for identifying a vulnerability stemming from an integration with an external component called The Gas Station Network. The Gas Station Network is a decentralized network of relayers which allows dApps to pay the cost of transactions instead of individual users. The paymaster was missing validation of the Trusted Forwarder, which returns the amount of funds used by the relay worker to be refunded. If you prefer a video, we recommend watching our analysis on the Sense Finance $50k bounty payout.
+References
+
+    https://medium.com/immunefi/88mph-function-initialization-bug-fix-postmortem-c3a2282894d3
+    https://medium.com/immunefi/mushrooms-finance-logic-error-bug-fix-postmortem-780122821621
+    https://medium.com/immunefi/alchemix-access-control-bug-fix-debrief-a13d39b9f2e0
+    https://medium.com/immunefi/openzeppelin-bug-fix-postmortem-66d8c89ed166
+    https://medium.com/immunefi/sense-finance-access-control-issue-bugfix-review-32e0c806b1a0
+    https://medium.com/immunefi/enzyme-finance-missing-privilege-check-bugfix-review-ddb5e87b8058
+
+V05:2023 Replay Attacks/Signature Malleability
+Overview
+
+Cryptography is central to the functionality of all smart contracts. The cryptographic primitives implemented in protocols are often based on the very same primitives used by the chain to operate in a permissionless way. However, they can sometimes be incorrectly utilized, leading to actions being performed more times than intended, resulting in financial loss or an incorrect contract state.
+Description
+
+Replay attacks occur when an attacker replays a valid transaction or message to deceive the smart contract into performing an action more than once. EVM-based chains have access to a primitive ecrecover, which allows a smart contract to verify some data was verified and signed by the recovered address. This native function, however, does not implement any kind of replay protection.
+
+Typically, replay protection is implemented by introducing a nonce (number used once), which is incremented when a signature is used, preventing the original signature from being used again once the nonce is updated. Signature malleability refers to the ability to modify the signature without invalidating it, allowing a signature to be used twice. This can be introduced when encoding data or casting between types, where some part, or bits, of a value are ignored when checking the signature, but used in their entirety to prevent replay attacks.
+Prevention
+
+To prevent replay attacks and signature malleability vulnerabilities, developers should implement nonce-based transaction management. Nonces can ensure that each transaction is unique and prevent replay attacks. Additionally, implementing proper signature verification checks, such as validating the integrity and authenticity of signatures, can help prevent signature malleability attacks. Contract design should also include mechanisms that prevent unintended actions from being repeated, such as one-time-use tokens or unique transaction identifiers.
+Examples
+
+The highest paid bounty in history at the time, Polygon’s Double-Spend vulnerability, dealt with a bug in Polygon’s WithdrawManager, which verified the inclusion and uniqueness of a burn transaction in previous blocks. The method branchMask that was encoded allowed multiple unique branch masks to encode to the same exit id. This signature malleability would have allowed an attacker to deposit only $100k and reuse signatures to result in a loss of $22.3M.
+References
+
+    https://medium.com/immunefi/polygon-double-spend-bug-fix-postmortem-2m-bounty-5a1db09db7f1
+    https://medium.com/immunefi/hack-analysis-nomad-bridge-august-2022-5aa63d53814a
+    https://medium.com/immunefi/hack-analysis-binance-bridge-october-2022-2876d39247c1
+
+V06:2023 Rounding Error
+Overview
+
+Improper handling of floating-point arithmetic and rounding errors can lead to financial discrepancies or exploitation of contract logic. Precise handling of numerical operations, using fixed-point arithmetic where applicable, is crucial to avoiding such vulnerabilities. Typically, these vulnerabilities may arise in permissionless exchange protocols, where non-standard decimal values can introduce unforeseen consequences.
+Description
+
+Rounding errors occur when smart contracts perform calculations involving floating-point arithmetic and fail to account for precision or rounding. These errors can lead to financial discrepancies, loss of funds, or incorrect rewards calculated within the contract. Smart contracts should use fixed-point arithmetic or alternative mechanisms to handle decimal calculations accurately, ensuring that rounding errors are minimized or eliminated.
+Prevention
+
+To prevent rounding errors, developers should employ fixed-point arithmetic or libraries that provide precise numerical operations. Fixed-point arithmetic uses integer values to represent decimals, avoiding the imprecision associated with floating-point arithmetic. Additionally, thorough testing and validation of numerical operations, including boundary conditions and corner cases, can help identify and address potential rounding errors.
+Examples
+
+Notably, DFX Finance patched a vulnerability which consisted of a rounding error with the EURS token due to the non-standard decimal value of two. Assimilators are necessary to DFX Finance’s Automated Market Maker, as all assets are paired with USDC. The AssimilatorV2 contract is responsible for converting all amounts to a numeraire, or a base value used for computations across the protocol. The issue arises when an integer division leads to zero tokens being transferred from the user, despite the user still receiving curve tokens which represent their portion of the curve pool.
+References
+
+    https://medium.com/immunefi/moonbeam-astar-and-acala-library-truncation-bugfix-review-1m-payout-41a862877a5b
+    https://medium.com/immunefi/dfx-finance-rounding-error-bugfix-review-17ba5ffb4114
+
+V07:2023 Reentrancy
+Overview
+
+Reentrancy has a long history in Ethereum and is the vulnerability class responsible for The DAO Hack, one of the biggest attacks on the early Ethereum network in 2016. Reentrancy allows an attacker to repeatedly call a vulnerable contract before the previous call completes, leading to unexpected state changes and unauthorized fund transfers.
+Description
+
+Reentrancy vulnerabilities occur when a contract allows external calls to be made to it during its execution without properly managing the state changes and flow of execution. Reentrancy allows an attacker to repeatedly call a vulnerable contract before the previous call completes, leading to unexpected state changes and unauthorized fund transfers. Implementing secure state management patterns and applying mutex locks can mitigate the risk of reentrancy attacks. Some tools which can help you identify where reentrancy may exist in your contracts include Slither, Mythril, and Pyrometer. You can read more about reentrancy in this article The Ultimate Guide to Reentrancy.
+Prevention
+
+To prevent reentrancy vulnerabilities, developers should follow secure state management patterns such as the “Checks-Effects-Interactions” (CEI) pattern. This pattern ensures that all state changes are made before any external calls are executed, preventing reentrancy attacks. Additionally, implementing mutex locks or using the “ReentrancyGuard” pattern can further safeguard against reentrancy by blocking reentrant calls.
+Examples
+
+The Omni Protocol experienced a hack that led to the loss of $1.4m dollars, as a result of a reentrancy attack on its Ethereum smart contracts. The vulnerable code used the ERC721’s safeTransferFrom method, which makes a call to smart contracts implementing the onERC721Received interface. This external call hands over execution to the receiver and introduces the reentrancy vulnerability.
+References
+
+    https://medium.com/immunefi/hack-analysis-omni-protocol-july-2022-2d35091a0109
+
+V08:2023 Frontrunning
+Overview
+
+Frontrunning is a technique where an attacker exploits the time delay between when a pending transaction is observed, and its inclusion in a block. By placing their own transaction with a higher gas price ahead of the victim’s transaction, the attacker can manipulate the outcome of certain contract interactions for their benefit. Frontrunning is a concern for decentralized exchanges, auctions, or any scenario where transaction order matters.
+Description
+
+Frontrunning occurs when an attacker gains an advantage by executing transactions ahead of others, particularly when they have knowledge of pending transactions that are about to be included in a block. In the context of smart contracts, frontrunning can be detrimental in scenarios where transaction order impacts the outcome. For example, in a decentralized exchange, an attacker can observe a victim’s pending transaction intended to buy a specific token at a certain price. They can then quickly submit their own transaction with a higher gas price in order to buy the same token at a lower price before the victim’s transaction executes. This allows the attacker to benefit from the price difference at the expense of the victim. Frontrunning can be executed by anyone observing the mempool, but can also originate from block producers themselves. Some chains have private RPCs which can mitigate risk, but validators and block producers within the private mempools may also have a false assumption of trust. Developers should mitigate potential frontrunning opportunities at the smart contract level and not rely on external mitigations which partially rely on trust or aligned incentives to secure their protocols.
+Prevention
+
+Preventing frontrunning requires a combination of technical and design considerations. Some preventive measures include the use of secret or commit-reveal schemes, implementing schemes where sensitive information such as prices or bids is kept secret until the transaction is confirmed, off-chain order matching, use of flashbots which allow users to bundle transactions together and submit them directly to miners reducing the opportunity for frontrunning, and fee optimization to reduce the likelihood of being outbid by frontrunners.
+Examples
+
+Frontrunning attacks have been observed in various DeFi protocols. RocketPool and Lido were notified of a vulnerability which could have affected both staking services. A malicious node operator could frontrun a deposit with previously prepared deposit data and minimal needed deposit value by using the same validator bls key to steal user deposits.
+References
+
+    https://medium.com/immunefi/rocketpool-lido-frontrunning-bug-fix-postmortem-e701f26d7971
+
+V09:2023 Uninitialized Proxy
+Overview
+
+Using proxy contracts without proper initialization can introduce vulnerabilities, as uninitialized storage variables can be manipulated by attackers. Implementing secure proxy patterns and conducting comprehensive initialization checks are vital to preventing unauthorized access to uninitialized contract states. Uninitialized proxy bugs have led to the highest bounty payout so far of $10m.
+Description
+
+Uninitialized proxy contracts refer to instances where the state variables of a proxy contract are not properly initialized before use. This can create security vulnerabilities, as uninitialized storage variables may contain sensitive data or control critical contract behavior. Attackers can exploit these vulnerabilities by manipulating uninitialized storage variables to gain unauthorized access or execute unintended actions. To mitigate this risk, it is crucial to ensure that proxy contracts are properly initialized before they are used in production environments.
+Prevention
+
+To prevent uninitialized proxy vulnerabilities, developers should ensure that all storage variables within the proxy contract are correctly initialized before deploying and using the proxy. This includes initializing sensitive data, access control permissions, and any other critical state variables. Developers should also implement comprehensive initialization checks within the proxy contract to verify that all required variables and dependencies have been properly initialized. They should also implement monitoring tools to provide a secondary level of verification that initialization has occurred properly. This can be achieved through constructor functions or initialization functions that are called after deployment through automated scripts or transaction bundling.
+Examples
+
+The Wormhole Uninitialized Proxy bug report is the highest paid bounty so far in history: $10m paid to the whitehat who submitted the report. When UUPS proxy contracts are deployed, the “constructor” is instead a regular Solidity function that exists in the implementation. The implementation provides the initialize() function which initializes the owner. Wormhole did not initialize the implementation contract of their implementation, which would have allowed an attacker to gain control of the implementation, and self-destruct the contract which would prevent the proxy contracts from being able to execute, as the logic they point to no longer exists.
+References
+
+    https://blog.openzeppelin.com/the-transparent-proxy-pattern
+    https://blog.openzeppelin.com/the-state-of-smart-contract-upgrades
+    https://medium.com/immunefi/harvest-finance-uninitialized-proxies-bug-fix-postmortem-ea5c0f7af96b
+    https://medium.com/immunefi/wormhole-uninitialized-proxy-bugfix-review-90250c41a43a
+
+V10:2023 Governance Attacks
+Overview
+
+Governance attacks refer to the manipulation or exploitation of the governance mechanisms within a decentralized protocol or smart contract system. These attacks aim to compromise the decision-making processes, voting systems, or parameter adjustments of the governance system, allowing the attacker to gain undue control or benefit from the protocol.
+Description
+
+Governance attacks can take various forms, including allowing proposals to be executed without quorum, allowing execution of proposals without any voting step, or directly manipulating the votes of other participants. These attacks can compromise the decentralized nature of the protocol and lead to centralization of power, or result in financial benefits for the attackers. Governance attacks are particularly relevant in Decentralized Autonomous Organizations (DAOs), where decision-making authority is distributed among token holders.
+Prevention
+
+To prevent governance attacks, it is important to establish a robust, well-defined, and transparent governance framework that outlines the decision-making processes, voting mechanisms, and rules for participation. Implement secure and tamper-resistant voting systems that ensure the integrity of votes. This may involve using cryptographic techniques, zero-knowledge proofs, or multi-signature schemes to enhance security. Ensure a fair and decentralized distribution of tokens to avoid the concentration of voting power in the hands of a few entities. Consider mechanisms such as token vesting or lock-up periods to discourage short-term manipulative behavior. Ensure a majority of governance tokens are not left distributed amongst exchanges such that a malicious actor could acquire enough tokens to unanimously pass proposals.
+Examples
+
+One notable example of a governance attack is the attack on Beanstalk, a permissionless FIAT stablecoin protocol. The hacker submitted two Beanstalk Improvement Proposals: BIP18 and BIP19. The first one proposed the full transfer of funds to the attacker, and the second one was a proposal to send $250k worth of $BEAN tokens to Ukraine’s official crypto donation address. The attacker flash loaned more than $1 billion from Aave, Uniswap, and SushiSwap to gain enough voting power (at least a ⅔ majority) to trigger an emergency governance execution.
+References
+
+    https://medium.com/immunefi/hack-analysis-beanstalk-governance-attack-april-2022-f42788fc821e
+
+Conclusion
+
+As smart contracts continue to evolve and gain widespread adoption, it is crucial for developers and auditors to stay up-to-date with the latest vulnerabilities and security best practices. By addressing these top ten smart contract vulnerabilities, stakeholders can enhance the security posture of their smart contracts and contribute to the overall trust and reliability of blockchain-based systems.
