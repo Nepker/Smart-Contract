@@ -1,0 +1,72 @@
+
+
+How to Learn Web3 Security
+Becoming a Solidity Smart Contract Auditor
+Learning Web3 security
+
+This page has resources that I found useful when learning and leveling up my web3 security skills. I estimate under 1000 people in the world really understand crypto security in depth, so you still have time to get in at the ground level. The biggest cybersecurity conference in the world (focused mostly on web2), DEFCON, sees 30,000 participants each year. Web3 security will need even more security people than normal technologies, so demand will increase as crypto grows.
+What’s the pay like?
+
+You can make money on a platform like code4rena as a part-time job or full-time. The top people on code4rena make 6 figures per year.
+
+cmichel, the #1 on the code4rena leaderboard, estimates a $100/hr salary for junior level and $250+/hr for senior security people.
+
+Top audit firms normally pay a set salary, so what path you choose depends on what benefits and tradeoffs you want to prioritize.
+
+If you want to go big, you can try to find security issues in big projects to receive a bug bounty reward of $10 million on Immunefi. If you think this is impossible, Immunefi already paid a $10 million bounty and a $6 million bounty in Q1 and Q2 2022. The Immunefi leaderboard has their full stats.
+Where to start
+
+Note: cmichel has a well-regarded guide which outlines a similar process.
+
+Step 1: Learn solidity (1 month)
+
+    https://cryptozombies.io/en/course
+    https://solidity-by-example.org/
+    https://docs.soliditylang.org/
+    https://remix.ethereum.org/
+
+Step 2: Learn common solidity security issues (1-2 months)
+
+CTFs (Capture the Flags)
+
+    https://ethernaut.openzeppelin.com/
+    https://capturetheether.com/
+    https://github.com/paradigm-operations/paradigm-ctf-2021
+    https://underhanded.soliditylang.org/
+
+Replay Hacks
+
+    https://github.com/SunWeb3Sec/DeFiHackLabs
+    https://github.com/blocksecteam/defi_poc
+    https://github.com/Rivaill/CryptoVulhub
+
+Other Resources
+
+    https://github.com/YAcademy-Residents/web3-security-talks
+    https://solidity-by-example.org/ (see the "Hacks" section)
+    https://rekt.news/
+    https://github.com/OriginProtocol/security
+
+Step 3: Apply your knowledge & learn more (1-2 months)
+
+Join a learning program for crypto security.
+
+    I participated in a 1 month long fellowship with the yAcademy Fellowship. This 1 month program should be held 3-4 times per year and I am now one of the leaders. So obviously I recommend it, but it’s considered to be for “advanced” crypto security people while the other ideas below are easier to apply to.
+    Secureum bootcamp is another security training option.
+    Even audit firms like Trail of Bits have an apprenticeship program, and Mixbytes has a training course that is a pathway to join their crowdsourced auditor group
+
+After accumulating foundational knowledge, you need to apply it to find your weaknesses and what to learn next. Participate in code4rena contests or Sherlock contests. Make sure you spend at least 5 hours per contest for your first few contests if you are looking for security issues. I prefer to spend even more time if I am try to find high risk issues because it takes time to read all the code, understand what the protocol is trying to do, and then find problems with the code. Even if you don’t find much, you get paid if you find anything.
+
+Step 4: Test and grow your skills
+
+    Get a job in crypto security at a place like Trail of Bits, Consensys Diligence, OpenZeppelin, Zellic, yAcademy, or many others companies
+    Go bug hunting on Immunefi, Sherlock, or Code4rena
+
+Common Mistakes to Avoid
+
+    yAcademy has gathered this list of common bug types in smart contracts
+    If you are doing crypto security or bug bounties for "easy money", plan to change your perspective. The top performers might look like sport stars doing slam dunks by showing the bugs they find, but what you don't see are the hours, days, and weeks of intense learning, manual reading of thousands of lines of source code, and the painful process of following many clues investigating potential vulnerabilities only to find there is no security issue. Expect to put in a lot of work to get good at this skill.
+    If you don't put in enough time to review the contract you are looking for bugs in, you will not find much. In order to find security bugs, you need to understand the code better than the developers, and the developers spent a lot of time writing their code! When I am doing a 2 week review, I find that the higher risk findings are normally found in the 2nd week of the review because it took me the first week just to understand how all the code works. So if you are expecting to find a bug in the first 5 hours of looking at code, change your plan and spend more time on it.
+    I am often asked what tools I use, as if there is some secret tools I use that find all the bugs. Even though I know how to use the different tools available, I rarely use any security tools when reviewing code. Tools are best applied to certain situations for specific purposes, like a chef using special knives to cut different foods, but not all food requires cutting with a knife! Source code review is a very manual process, which is why we need more security people in web3 to help review all the code that is written. Yes, it's a good idea to run some tools, but don't rely on them, rely on your skill at manually reading the code and understanding it.
+
+Happy Hunting

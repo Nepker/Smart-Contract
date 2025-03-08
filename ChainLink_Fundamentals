@@ -1,0 +1,438 @@
+1. Introduction to Solidity
+Learning Objectives
+
+    LO1: Understand Solidity Fundamentals
+    LO2: Introduction to Smart Contract Libraries
+    LO3: Build an ERC20 Token
+    LO4: Build an NFT
+
+Solidity Fundamentals
+What is Solidity?
+Solidity is a high-level, object-oriented programming language for writing smart contracts. It is a curly-bracket language similar to C++, Python, and JavaScript. It is statically typed and designed to run on the Ethereum Virtual Machine (EVM). Solidity supports inheritance, libraries, complex user-defined types, and other powerful features, making it a flexible tool for building decentralized applications (dApps).
+Solidity Versions and Smart Contract Structure
+Solidity evolves continuously, with new versions offering optimizations, security enhancements, and additional features. Each Solidity file starts with a pragma directive that specifies the compiler version required to ensure compatibility and stability during deployment.
+Typical Smart Contract Structure:
+
+    Pragma directive: Specifies the Solidity compiler version (e.g., pragma solidity ^0.8.0;).
+    Contract Declaration: Defines the contract and its name.
+    State Variables: Data that will be stored on the blockchain.
+    Constructor: A special function that runs once when the contract is deployed, typically initializing state variables.
+    Functions: Define the contract’s behavior and interactions with state variables.
+    Modifiers and Access Control: Control access to functions and enforce conditions.
+    Events: Log information that external applications can listen to.
+    Library Imports (optional): Enable the contract to use external libraries.
+
+Understanding Solidity’s versioning practices and the structure of smart contracts is crucial for any developer looking to work with Ethereum. Solidity’s continuous evolution ensures it remains at the forefront of decentralized development.
+State Variables and Parameters
+In Solidity, state variables represent the persistent data stored on the blockchain, while parameters are temporary inputs passed to functions. State variables exist throughout the contract’s lifecycle, while parameters only exist during function execution and are not stored permanently.
+Code example:
+Link
+Initializing Contracts Using Constructors
+A constructor is a special function in Solidity that runs only once, during the contract deployment. It is mainly used to set initial state variables or assign ownership to a contract.
+Visibility Specifiers in Solidity
+Visibility specifiers define how and where functions and state variables can be accessed:
+
+    Public: Accessible by anyone, both inside and outside the contract.
+    External: Accessible only from outside the contract. Internal functions cannot call external functions.
+    Internal: Accessible only within the current contract and derived contracts.
+    Private: The most restrictive; accessible only within the contract they are defined in, not by derived contracts.
+
+Choosing the correct visibility for functions and state variables is crucial for writing secure and efficient contracts.
+Permissions and Access Control
+Permissions are critical in Solidity, particularly in decentralized environments. Solidity uses modifiers to impose conditions on function execution, allowing developers to check permissions or ensure only authorized entities can perform certain actions.
+Code example:
+Link
+What Is ABI (Application Binary Interface)?
+The Contract Application Binary Interface (ABI) is the standard way to interact with contracts in the Ethereum ecosystem, both from outside the blockchain and for contract-to-contract interaction. Data is encoded according to its type, as described in this specification. The encoding is not self-describing and thus requires a schema to decode.
+We assume that the interface functions of a contract are strongly typed, known at compilation time, and static. We assume that all contracts will have the interface definitions of any contracts they call available at compile-time.
+
+
+Current layout: 1 Panel without tree
+1. Introduction to Smart Contract Libraries
+1. Introduction to Smart Contract Libraries
+In Solidity, libraries are reusable chunks of code that can be shared across multiple contracts. They help developers organize and reuse common logic, reducing code duplication and streamlining contract development. Though similar to contracts, libraries come with specific restrictions that make them more efficient and secure when used properly.
+
+    Statelessness: Libraries cannot maintain state variables, meaning they don’t store any data between function calls. This makes them ideal for utility functions that handle data transformations or calculations without modifying the contract’s state.
+    Reusability: By encapsulating common logic within a single library, developers can reuse the same code across different contracts. This not only reduces redundancy but also simplifies maintenance, as updates to the logic only need to be made in one place.
+    No Inheritance: Unlike contracts, libraries cannot be inherited. However, they can still be used within contracts either by calling their functions directly or by attaching their functions to data types using the using for directive, allowing for flexible use.
+    Gas Efficiency: Libraries optimize gas consumption by being deployed only once. Contracts that use the library can reference it without redeploying the same code, which saves both storage and deployment costs.
+    Security: Centralizing well-audited code within libraries helps improve the overall security of smart contracts. Since libraries do not modify the state of the calling contract, they also reduce the risk of state manipulation attacks, ensuring a more secure contract architecture.
+
+Solidity libraries come in two main types: Embedded Libraries and Linked Libraries.
+
+    Embedded Libraries: They are deployed with the contract that uses them. The library code is copied into the contract’s bytecode, meaning the library functions are directly accessible as if they were part of the contract itself.
+    Linked Libraries: Linked libraries are deployed separately and linked to contracts after deployment. The library’s address is included in the contract bytecode, and the functions are called externally at runtime. This approach is more gas-efficient for large libraries or when multiple contracts share the same library.
+
+Using the OpenZeppelin Contracts Wizard
+The OpenZeppelin Contract Wizard is a user-friendly online tool designed to simplify the creation of smart contracts by allowing developers to generate customized Solidity contracts without writing code from scratch. The tool is particularly useful for those who are new to smart contract development or for experienced developers who want to quickly scaffold a contract with best practices and security features in place.
+The Contract Wizard is part of the OpenZeppelin Contracts library, which is open-source and widely used in the blockchain community. Developers can freely use, modify, and contribute to the generated contracts.
+
+
+Current layout: 1 Panel without tree
+1. Building an ERC-20 Token
+In this tutorial, you will learn how to create a token contract using OpenZeppelin’s standard implementation, compile it using the Remix IDE, and then deploy it to the Ethereum blockchain.
+Requirements
+
+    Install Metamask: If you don’t have it, check the Lesson “Wallets and Testnets” to install and configure it.
+    Access Remix: Remix is an online Integrated Development Environment (IDE) specifically designed for writing, testing, and deploying Solidity contracts. Open your web browser and navigate to the Remix IDE.
+
+Create, Compile, and Deploy an ERC20 Token
+Create a new Workspace in Remix: At the top of the File Explorer panel, click on the WORKSPACES dropdown menu.
+Select create a new workspace to start a new workspace. On the template explorer, select the BLANK option by clicking Create. This will create a blank project.
+Give a name for your workspace. In this example we are going to use Bootcamp. After that, click on the button OK.
+Open a New File in Remix: In the Remix IDE, go to the File Explorer icon on the left-hand side.
+Click the File icon to create a new file and name it MyToken.sol.
+
+Copy and Paste the Token Contract Code: You can create your token using the Openzeppelin Wizard. However for now, you should use this pre-generated one.
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
+import "@openzeppelin/contracts@4.6.0/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts@4.6.0/access/AccessControl.sol";
+contract Token is ERC20, AccessControl {
+bytes32 public constant MINTER_ROLE = keccak256(“MINTER_ROLE”);
+constructor() ERC20("Chainlink Bootcamp 2024 Token", “CLBoot24”) {
+_grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+_grantRole(MINTER_ROLE, msg.sender);
+}
+function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+_mint(to, amount);
+}
+function decimals() public pure override returns (uint8) {
+return 2;
+}
+}
+Copy the above code and paste it into your MyToken.sol file in Remix.
+Select the Compiler Version: On the left sidebar in Remix, click on the Solidity Compiler tab (represented by a Solidity logo).
+Make sure the compiler version is set to 0.8.0 or later, as indicated in the pragma directive (pragma solidity ^0.8.0;).The ^ symbol tells the compiler that any version above 0.8.0 can be used. Without the symbol, only version 0.8.0 would be allowed.
+
+Compile the Contract: You can always compile your contract by clicking on the Compile MyToken.sol button. However, you can make Remix compile it automatically by checking the box Auto compile.
+
+If there are no errors, the contract will compile successfully, and you’ll see a green checkmark.
+Select Environment: At this point you can deploy your token to the network. To do that, you have to connect your Metamask in Remix. If you do not remember how to do that, you can check it out in the lesson Introduction to Solidity.
+Deploy the Contract: Go to the Deploy and Run transaction page by clicking on the Ethereum icon.
+
+In the Contract dropdown, select MyToken.sol.
+Click Deploy.
+
+Confirm you are deploying on the Metamask plugin on your browser by clicking Confirm.
+Check Total Token Supply and Balances
+Once your contract is deployed, you can view it in the Deployed Contracts section. Here, you will find all the functions available within the contract, allowing you to interact with them directly.
+You can pin your contract by clicking on the pin icon. This will save your contracts if you want to close Remix and continue another time. Note that pinning is workspace specific, so make sure you open the same Remix workspace in subsequent modules when you need to access this Token Contract.
+To check the total supply of your token, simply call the totalSupply() method.
+If you want to view the balance of a specific wallet, use the balanceOf() method and pass the wallet address as a parameter. Currently, your token will not have any tokens minted, so the result will be 0 for both methods.
+Adding Your Token to a Web Wallet
+If you deployed your contract on a testnet, you can easily add your token to MetaMask by following these steps:
+
+    Locate the Contract Address:
+        After deploying your token contract, you will receive a contract address. This address uniquely identifies your token on the blockchain.
+        In Remix, you can find this address in the Deployed Contracts section, or it may be provided directly after deployment in the transaction details.
+    Copy the Address:
+        Click on the copy-paste icon to copy it to your clipboard. You’ll need this address to add the token to MetaMask.
+    Access Metamask:
+        Open your MetaMask wallet by clicking on the MetaMask extension icon in your browser.
+    Select the Correct Network:
+        Ensure that you are on the right network, which in this example should be Sepolia.
+    Go to the Tokens Tab:
+        In MetaMask, navigate to the Tokens tab. This is where you can manage all the tokens associated with your wallet.
+    Add a New Token:
+        Scroll down and click on the Import tokens link.
+    One the next screen, select the tab Custom token.
+    Enter the Token Contract Address:
+        In the Token Contract Address field, paste the token contract address that you copied earlier.
+        Check if the information is correct (Address, Token Symbol, and Decimals).
+    Confirm and Add:
+        Click Next to confirm the information.
+        On the next screen, click Import to finalize the process.
+
+
+
+Current layout: 1 Panel without tree
+1. Minting Tokens
+Our token has no supply. To increase the supply of tokens, we have to call the method mint() from our contract
+To do this, go to the tab Deploy & Run Transactions.
+Find your Token and expand the tab so you can see the methods.
+Find the method mint and expand it to check the parameters.
+
+The parameter to: will be used to input the address you want to receive the minted tokens.
+The parameter amount: will be used to input the amount you want to mint.
+We will create 100 tokens by setting the amount value as 10000. Please note that our Token will have 2 decimals, which means that if we want to make 100 tokens, we have to put in a value of 10000.
+To confirm the transaction, click on the transact button and Confirm the transaction in your Metamask wallet.
+Now you can check to see if your balance has increased.
+Allowance and Token Approvals
+Token approvals enable a contract to spend your tokens. This feature is commonly used in DeFi applications that need to transfer ERC20 tokens from your wallet to another wallet or contract.
+To use this feature, you can call the approve() method, specifying the address that will use your tokens and the amount they are allowed to spend. You can always verify if a contract has permission to spend your tokens by calling the allowance() method.
+
+
+
+Current layout: 1 Panel without tree
+1. Building an ERC-721 Token (NFT)
+1. Building an ERC-721 Token (NFT)
+Using Oppen Zeppelin Contracts Wizard
+The Open Zeppelin Contracts Wizard is an interactive smart contract generator based on OpenZeppelin Contract.
+In this exercise, we will create a simple NFT contract. When you first open the wizard, you will see an interface with options for the type of contract you want to create, including ERC20, ERC721, ERC1155, Governor, and Custom.
+We will be selecting the ERC721 option as this is the token standard for NFTs.
+On the left side you’ll notice the Settings tab. This is where we can configure various features for our NFT. We will be setting the following:
+
+    Name
+    Symbol
+    Mintable
+    Auto-increment Ids
+
+You will notice that as you click various options, the code is automatically filled out for you. This makes it very quick and easy to generate templates for these contracts.
+Congratulations! You now understand the difference between the ERC20 Token you deployed and minted previously and an ERC721 Token contract.
+In the upcoming CLF-07 - Chainlink VRF Training Course, you will learn how to take this newfound knowledge and utilize Chainlink VRF to add randomness to an NFT, creating a lot more fun for your users!
+Conclusion
+Solidity is a powerful and evolving language for building decentralized applications on Ethereum. By mastering its fundamentals—from state variables to modifiers, visibility specifiers, and smart contract libraries—students can confidently develop efficient, secure smart contracts. This course aims to provide the foundational knowledge necessary to build real-world applications with Solidity.
+In our next lesson, CLF02 - Oracles and Chainlink Data Feeds, you will learn about the Chainlink Data Feeds service and how blockchain Oracles create a reliable bridge between offchain and onchain data, which enables smart contracts to interact with the real world while maintaining the blockchain’s core principles of decentralization, trustlessness, and security.
+
+
+
+Current layout: 1 Panel without tree
+1. Oracles Concepts
+CLF-02 - Oracles and Chainlink Data Feeds
+Learning Objectives
+LO1: Outline Oracles
+LO2: Use Chainlink Data Feeds
+Oracles
+Oracles Concepts
+Blockchains are “sealed” systems. They are designed to be isolated and deterministic. In this context, deterministic means that identical inputs will always produce identical outputs. This is achieved by the consensus mechanism–all the nodes in the blockchain must agree on the state of the data in each transaction.
+For security and design reasons, blockchains cannot access external data on the public Internet directly. This has big benefits for the security and permanence of the data record, but comes with trade-offs and downsides!
+For instance, achieving synchronization and consensus across all the nodes in a tamper-resistant way causes a bit more latency than traditional computing services. Furthermore, this isolation-by-design feature of blockchain significantly limits the functionality of smart contracts, as many applications - from finance to insurance - depend on real-time data from external sources such as market information or IoT devices.
+Those constraints, often referred to as “The Oracle Problem”, add friction to the adoption of blockchain technology, even for use cases where the benefits are huge.
+Overcoming this external connectivity constraint requires an additional infrastructure component known as an oracle. Oracles solve the specific problem of connectivity between blockchains and other computing systems by providing a trusted way to bring off-chain data onto the blockchain, ultimately enabling smart contracts to securely and reliably execute based on real-world events and communicate with traditional systems.
+As you now understand, Oracles are essential for expanding the functionality and real-world applicability of smart contracts, enabling them to interact with and react to events outside the blockchain in a secure and reliable manner.
+The Role of a Blockchain Oracle
+Oracles can be thought of as an infrastructure “layer” in decentralized applications (dApps) that facilitate communication between onchain and offchain environments.
+They perform several critical functions:
+
+    Listening: Detecting when a smart contract on a blockchain is requesting external data.
+    Extracting: Fetching this data from off-chain sources.
+    Formatting: Converting the data into a blockchain-compatible format.
+    Securing & Validating: Ensuring the data’s integrity through cryptographic proofs.
+    Computing: Executing specific computations off-chain to augment data and/or to provide scalability, efficiency, and security to dApps.
+    Broadcasting: Sending the verified data back to the blockchain. Since the data needs to be agreed on by all nodes in the blockchain, it is referred to as “broadcasting”.
+    Delivery: Delivering computation results to external systems as needed, or from external systems back into smart contracts.
+
+Types of Blockchain Oracles
+
+    Inbound Oracles: These oracles bring external data to the blockchain. For example, they deliver information such as weather conditions, sports scores, or stock prices into a smart contract.
+    Outbound Oracles: These oracles send data from the blockchain to external systems. They enable smart contracts to communicate and interact with computer systems in the outside (off-chain) world.
+    Consensus Oracles: These oracles aggregate data from multiple sources and provide a single source of truth to the smart contract. This is done to improve the reliability and accuracy of the data.
+    Cross-Chain Oracles: These oracles facilitate communication and data exchange between different blockchain networks (each of which is like an isolated “island”). Cross-Chain Oracles are essential for interoperability between different blockchains.
+
+Centralized vs. Decentralized Oracles
+Centralized oracles are where the oracle service or infrastructure exists as a single node. As you can imagine, centralized oracles introduce a single point of failure. If that central oracle node shuts down, the blockchain gets cut-off from external data.
+Centralized oracles are also easier targets for attacks—for the same reason as above! Furthermore, the risk of a centralized oracle getting “compromised” or manipulated is higher than a decentralized oracle, which destroys the reliability of the data it supplies.
+Decentralized oracles avoid single points of failure and reduce the risk of manipulation by distributing the oracle service across multiple nodes to improve security.
+When to Use Oracles??
+Data Exchange: Oracles enable smart contracts to interact with global data sources, making them far more versatile and useful across different applications.
+Automation: By using oracles, smart contracts can automate processes that depend on external data, such as triggering payments or executing trades based on market prices. These automation oracles can also remove the need for dependence on humans or centralized entities to trigger the operation of a smart contract when specific conditions are met.
+
+
+
+Current layout: 1 Panel without tree
+2. Chainlink Oracles
+Chainlink Oracles Overview
+Chainlink is a network of decentralized oracle networks that provide reliable, tamper-proof inputs and outputs for complex smart contracts on any blockchain. It was created to solve the “oracle problem,” which refers to the challenge of getting reliable off-chain data into a blockchain in a secure, reliable, scalable, and decentralized manner.
+It employs a combination of:
+
+    Open-source technology for transparency and community engagement.
+    Decentralization at both node and data levels to avoid single points of failure.
+    Data signing to verify data integrity and ensure quality.
+    Monitoring systems to assess and enhance node reliability.
+
+By leveraging these techniques, Chainlink enables smart contracts to securely and scalably interact with (and rely on) external data.
+The decentralized nodes mitigate against single points of failure associated with centralized oracles. The use of multiple oracle nodes and data sources helps mitigate the risk of inaccurate data being fed into smart contracts.
+Chainlink has become a crucial part of the decentralized finance (DeFi) ecosystem, with partnerships and integrations across a wide array of blockchains and protocols. Its growing network of data providers and consumers has made it one of the most widely adopted oracle solutions in the blockchain space.
+Chainlink continues to expand its capabilities, aiming to provide the infrastructure necessary for a truly decentralized and verifiable web, where smart contracts can interact with the real world in a secure and trustless manner.
+
+
+Current layout: 1 Panel without tree
+1. Chainlink Data Feeds
+In this section we will learn about Chainlink Data Feeds.
+Here are some reference resources on Data feeds:
+
+    Using Data Feeds | Chainlink Documentation
+    Developer Hub | Data
+
+Chainlink Data Feeds Fundamentals
+Chainlink Data Feeds allow you to fetch real-world data such as asset prices, reserve balances, and L2 sequencer health and use that data in your smart contract.
+Data feeds provide many different types of data for your applications, such as:
+
+    Price Feeds
+    Proof of Reserve Feeds
+    Rate and Volatility Feeds
+    L2 Sequencer Uptime Feeds
+
+You will learn more about these in due course, so don’t feel the need to understand them fully now.
+Data Feed Components
+Data Feeds include the following components:
+
+    Consumer: A consumer is an onchain or offchain application that uses (i.e., consumes) Data Feeds. Onchain Consumer smart contracts use Chainlink’s AggregatorV3Interface to interact with the Chainlink Data Feed onchain contracts, and retrieve information from the smart contract that’s aggregating the relevant data. For a complete list of functions exposed in the AggregatorV3Interface, see the Data Feeds API Reference.
+    Proxy Contract: Proxy contracts are onchain smart contracts provided by Chainlink that act like proxy servers do in the traditional web world. Proxy contracts “point” to the correct aggregator contract that received data for a particular Data Feed. Using proxies enables the underlying aggregator to be upgraded without any service interruption to consuming contracts. The proxy will simply point to the new contract, and nothing changes for the consuming contract. The EACAggregatorProxy.sol contract on Github is a common example.
+    Aggregator Contract: An aggregator is a smart contract managed by Chainlink that receives periodic data updates from the Chainlink decentralized oracle network. Aggregators store aggregated data onchain so that consumers can retrieve it and act upon it within the same transaction. It also that makes the data transparent and publicly verifiable. For a complete list of functions and variables available on most aggregator contracts, see the Data Feeds API Reference.
+
+
+
+2. Chainlink Price Feeds
+Chainlink Price Feeds are a specific type of decentralized data feed provided by the Chainlink network, designed to deliver reliable, tamper-proof price data for assets such as cryptocurrencies, commodities, and other financial instruments.
+Price Feeds empower smart contracts to act on important, real-time data such as asset prices and market data. This is especially true in DeFi applications, where accurate and timely pricing information is critical to providing a trust-minimized and efficient alternative to traditional finance.
+Common Use Cases
+DeFi Protocols: Chainlink Price Feeds are used by various DeFi platforms like Aave and Compound to determine real-time asset prices for lending, borrowing, trading, and other financial services. For example, lending and borrowing platform AAVE uses Data Feeds to help ensure loans are issued at fair market prices and that loans are sufficiently collateralized at all times.
+Stablecoins: Price Feeds help maintain the peg of stablecoins by providing accurate market values of assets used to “back” the stablecoin.
+Derivatives and Prediction Markets: Chainlink Price Feeds are used to settle derivatives contracts and to provide real-time market data for prediction markets—you will learn more about these later.
+Find Available Chainlink Data Feeds
+Asset prices are presented in asset pairs, as the value of one asset is expressed in relation to another (e.g., 1 USD is worth 0.89 Euro, and so on). You can get the pairs and chains where Data Feeds are available at https://data.chain.link/. Note that Data Feeds are similar but not the same as Data Streams. Data Streams are covered later on in this course.
+In order to get information from a Data Feed, you must know the feed’s onchain address. In the links below provide the addresses for Data Feeds across supported blockchain networks:
+Chainlink Data Feeds Contract Addresses:
+Price Feed Contract Addresses | Chainlink Documentation
+Data Feed Contract Addresses From the Sepolia Test Network:
+Price Feed Contract Addresses | Chainlink Documentation
+
+
+Current layout: 1 Panel without tree
+1. Building Token Shop with Price Feeds
+Building the Token Shop: A Smart Contract to Sell Tokens Using Chainlink Data Feeds to Calculate the Price
+In this exercise, we will create a “TokenShop” smart contract using the Solidity programming language, which is designed for Ethereum-based blockchains.
+This smart contract creates its own onchain token that others can buy from the smart contract.
+First, open your remix IDE in a new tab by going to https://remix.ethereum.org.
+Click on the File Explorer button on the left vertical navigation bar and create a new file that you can name TokenShop.sol.
+
+Copy the code below and paste it into your new TokenShop.sol file in Remix. If you have trouble copying the code, open this github file in a new tab and copy the code from there.
+When pasting into Remix, you may get an alert that you’re pasting code—just click OK.
+
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.19;
+
+// Deploy this contract on Sepolia
+
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
+interface TokenInterface {
+    function mint(address account, uint256 amount) external;
+}
+
+contract TokenShop {
+
+    AggregatorV3Interface internal priceFeed;
+    TokenInterface public minter;
+    uint256 public tokenPrice = 200; //1 token = 2.00 usd, with 2 decimal places
+    address public owner;
+
+    constructor(address tokenAddress) {
+        minter = TokenInterface(tokenAddress);
+        /**
+        * Network: Sepolia
+        * Aggregator: ETH/USD
+        * Address: 0x694AA1769357215DE4FAC081bf1f309aDC325306
+        */
+        priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+        owner = msg.sender;
+    }
+
+    /**
+    * Returns the latest answer
+    */
+    function getChainlinkDataFeedLatestAnswer() public view returns (int) {
+        (
+            /*uint80 roundID*/,
+            int price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) = priceFeed.latestRoundData();
+        return price;
+    }
+
+    function tokenAmount(uint256 amountETH) public view returns (uint256) {
+        //Sent amountETH, how many usd I have
+        uint256 ethUsd = uint256(getChainlinkDataFeedLatestAnswer());       //with 8 decimal places
+        uint256 amountUSD = amountETH * ethUsd / 10**18; //ETH = 18 decimal places
+        uint256 amountToken = amountUSD / tokenPrice / 10**(8/2);  //8 decimal places from ETHUSD / 2 decimal places from token
+        return amountToken;
+    }
+
+    receive() external payable {
+        uint256 amountToken = tokenAmount(msg.value);
+        minter.mint(msg.sender, amountToken);
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner);
+        _;
+    }
+
+    function withdraw() external onlyOwner {
+        payable(owner).transfer(address(this).balance);
+    }
+}
+
+Deploying TokenShop.sol
+Go to the Deploy & Run Transactions tab within the Remix IDE. You want to make sure of two things:
+
+    That you’ve selected the TokenShop.sol Contract (not the TokenInterface called TokenShop.sol) from the contract field in the deployment tab. You will receive an error if you choose the TokenShop’s Interface file.
+    That your MetaMask browser wallet is connected to the Sepolia testnet and also that you’ve connected to MetaMask as your Remix environment (the injected provider).
+
+After it’s deployed to Sepolia and you see the transaction details in Remix’s console sub-window, copy your TokenShop Contract address from the Deployed Contracts UI in Remix
+Make a note of this address and keep it in a text file that you can easily access. You will now need the address of the Token.sol contract you deployed in the last module. If you don’t have that address, you will need to repeat the steps we covered in the previous module about how to deploy the ERC20 token.
+The TokenShop contract requires a TOKENADDRESS as an input parameter. So paste the Token.sol Contract address that you deployed in the previous module as the TOKENADDRESS input parameter.
+Click on Transact, and this should open your MetaMask wallet window. Hit Confirm to initiate the transaction on Sepolia—this will deploy TokenShop.sol to the Sepolia network.
+It’s a good idea to “pin” the TokenShop contract in this workspace so you can easily “reload” it if you end up closing Remix and returning later. Ideally, at this point, both your Token and your TokenShop contracts should be pinned to your active Remix Workspace.
+Now lets give your TokenShop contract the approval it needs to be able to “mint” your tokens from the Token.sol contract!
+In the deployed contracts section, find your Token.Sol contract dropdown. Look for the MINTER_ROLE property button.
+Click it to read the data from your smart contract. It should be “0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6”
+This is the keccak256 hash string representing the word “MINTER_ROLE”.
+Next, paste that MINTER_ROLE hash string “0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6” into the grantRole() function along with the address of the TokenShop contract you just deployed:
+Doing this will authorize your TokenShop to mint your newly created token.
+Before we go on, let’s double-check and confirm that your TokenShop has indeed been authorized.
+In your Token.sol Remix Dropdown menu, find the hasRole function. Expand the function and note that it requires two parameters: “role” and “account”. This function will tell us what role a given account has—in our case the account we are checking the role for the TokenShop contract address. By passing in these two pieces of data, the contract will return a boolean (true or false) indicating whether that address has that particular role assigned to it.
+We are interested in the MINTER ROLE represented by “0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6”, which you recently used.
+Put in those two inputs and click on the hasRole button—it should return a boolean response of “true”.
+Getting Price Data From Chainlink Price Feeds
+Now we are going to use the Chainlink USD/ETH Price Feed that we referenced inside our TokenShop Contract.
+Go to your TokenShop.sol deployed contract dropdown and find the getChainlinkDataFeedLatestAnswer() function. You can hover your mouse over the buttons to see the full function name. Click on the button to run the code inside that function on the blockchain. It will return a large integer—larger than you’d expect. This is because the Solidity language does not support decimal points, and this. in its own way, increases precision.
+
+This large number is the price of 1 ETH in terms of USD. But it needs decimals. Different feeds may have different decimal points.
+You can find this data in the Price Feeds Documentation (make sure “Show More Details” is checked).
+The integer we got back needs to be divided by 10 raised to the power of the number of decimal points.
+Since the ETH/USD price feed’s data has 8 decimal places, we can see that the price as per the screenshot is $3125.42553378 (divide the returned value by 10^8 to add the decimals back in).
+
+
+2. Buy Tokens From Token Shop
+Buying Tokens From TokenShop
+Open your Metamask and send 0.01 ETH to your TokenShop.sol Address. You will need to proceed through the two screens below to confirm the token your sending, in what quantity, and to which address (Tokenshop, in this case). This will send 0.01 Eth to your TokenShop contract and trigger the receive() function in it. Note that inside the receive() function there is a call to minter.mint(), which will mint a token from your Token.sol to your wallet address.
+In a few moments, once MetaMask confirms the transaction on the blockchain, you can check whether your freshly minted token shows in your account in two ways:
+
+    You can check your MetaMask wallet, under Tokens, to see if the Token you’ve previously added to your MetaMask has an updated balance.
+    Or, you can switch to your Token.sol contract in Remix. Then, check how much of your Token is held by your wallet address by putting the wallet address in the balanceOf() function.
+
+Congratulations! You just bought your own freshly minted token that you deployed to the Sepolia blockchain!
+
+
+Current layout: 1 Panel without tree
+1. Introducing Chainlink Automation
+Chainlink Automation is a decentralized service that automatically executes smart contract functions based on predefined conditions or at specific intervals.
+As we’ve seen, smart contracts are incredibly powerful. But they cannot do everything on their own. They need to be triggered… enter Chainlink Automation.
+Imagine your smart contract as a toy robot. It can do different tasks, but it needs someone to press buttons on its controller to make it work. Manually pressing buttons all the time is tiring and an unreliable way to ensure the robot is doing what it needs to at the right time.
+Chainlink Automation is like a helper for the robot. It watches for specific triggers or waits for a particular time in the day. When those triggers occur or the specific time comes, Chainlink Automation automatically presses the robot’s buttons for you. It never gets tired, never forgets, and can watch for many different things simultaneously.
+The Concept of an “Upkeep”
+Upkeep is the term given to the jobs or tasks that you define and register for Chainlink Automation to execute onchain.
+For example, you can register an upkeep that calls a smart contract function if a specific set of conditions are met.
+These specific conditions are called "triggers".
+Types of Automation Triggers
+Chainlink Automation can be triggered via three different mechanisms:
+
+    Time-based triggers:
+    Time-based triggers execute an existing external function in your smart contract using a schedule based on a cron expression.
+    Custom logic triggers:
+    Custom logic triggers use logic stored in a smart contract with an AutomationCompatableInterface interface. We’ll learn more about this shortly.
+    Log trigger:
+    Log triggers track onchain events that are often emitted from a smart contract. When they are, Chainlink Automation will run the associated function.
+
+Let’s look at how to use each of these with a few short examples in a moment.
+Automation Architecture
+Automation Nodes provide the Chainlink Automation Service. The Chainlink Automation Network (of Nodes) is governed by the Chainlink Automation Registry, which manages and compensates Automation Nodes for successful upkeeps.
+Developers can register upkeeps, while Node Operators can register as Automation Nodes. The network operates using a peer-to-peer system based on Chainlink’s OCR3 protocol.
+Automation Nodes identify eligible upkeeps and then reach consensus on which upkeeps to perform. The network uses signed reports, validated by the Registry before execution, ensuring cryptographic guarantees and built-in redundancy.
+Chainlink Automation employs a robust transaction manager mechanism, providing reliable automation even during gas spikes or significant blockchain reorganizations. The system includes internal monitoring and alerting mechanisms to maintain network health and ensure high reliability and performance.
+Chainlink Automation supports multiple blockchains, with details on the supported networks page. Information about the cost of using Chainlink Automation can be found on the Automation economics page.
